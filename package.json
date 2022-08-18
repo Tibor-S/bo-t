@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/Tibor-S/bo-t/issues"
   },
-  "homepage": "https://github.com/Tibor-S/bo-t#readme"
+  "homepage": "https://github.com/Tibor-S/bo-t#readme",
+  "dependencies": {
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "winston": "^3.8.1"
+  }
 }
