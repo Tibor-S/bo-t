@@ -1,7 +1,7 @@
 const Discord = require("discord.io");
 const logger = require("winston");
 const auth = require("./auth.json");
-let targetChannelID = 0;
+let targetChannelID = "0";
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -22,15 +22,12 @@ bot.on("ready", function (evt) {
   logger.info(bot.username + " - (" + bot.id + ")");
 });
 
-// bot.sendMessage();
-
 bot.on("message", function (user, userID, channelID, message, evt) {
   // Our bot needs to know if it will execute a command
   // It will listen for messages that will start with `!`
   if (message.substring(0, 2) == "/*") {
-    var arg = message.substring(1);
+    var arg = message.substring(2);
     var cmd = arg;
-
     switch (cmd) {
       // /*status
 
@@ -38,7 +35,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         bot.sendMessage({
           to: channelID,
           message:
-            channelID !== 0
+            targetChannelID !== "0"
               ? `Online in channel ${targetChannelID} :)`
               : "Missing a target channel.\n\nTarget a channel by typing /*target in the desired channel.",
         });
