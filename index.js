@@ -1,6 +1,7 @@
-var Discord = require("discord.io");
-var logger = require("winston");
-var auth = require("./auth.json");
+const Discord = require("discord.io");
+const logger = require("winston");
+const auth = require("./auth.json");
+let targetChannelID = 0;
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -11,7 +12,7 @@ logger.level = "debug";
 
 // Initialize Discord Bot
 var bot = new Discord.Client({
-  token: auth.token,
+  token: auth["discord-token"],
   autorun: true,
 });
 
@@ -21,21 +22,33 @@ bot.on("ready", function (evt) {
   logger.info(bot.username + " - (" + bot.id + ")");
 });
 
+bot.sendMessage();
+
 bot.on("message", function (user, userID, channelID, message, evt) {
   // Our bot needs to know if it will execute a command
   // It will listen for messages that will start with `!`
-  if (message.substring(0, 1) == "!") {
-    var args = message.substring(1).split(" ");
-    var cmd = args[0];
-    args = args.splice(1);
+  if (message.substring(0, 2) == "/*") {
+    var arg = message.substring(1);
+    var cmd = arg;
 
     switch (cmd) {
-      // !ping
+      // /*status
 
-      case "ping":
+      case "status":
         bot.sendMessage({
           to: channelID,
-          message: "Pong!",
+          message:
+            channelID !== 0
+              ? `Online in channel ${targetChannelID} :)`
+              : "Missing a target channel.\n\nTarget a channel by typing /*target in the desired channel.",
+        });
+        break;
+
+      case "target":
+        targetChannelID = channelID;
+        bot.sendMessage({
+          to: channelID,
+          message: `Now targeting channel ${channelID}`,
         });
         break;
       // Just add any case commands if you want to..
