@@ -17,13 +17,13 @@ var bot = new Discord.Client({
   autorun: true,
 });
 
-bot.on("ready", function (evt) {
+bot.on("ready", function (_evt) {
   logger.info("Connected");
   logger.info("Logged in as: ");
   logger.info(bot.username + " - (" + bot.id + ")");
 });
 
-bot.on("message", async (user, userID, channelID, message, evt) => {
+bot.on("message", async (_user, _userID, channelID, message, _evt) => {
   // Our bot needs to know if it will execute a command
   // It will listen for messages that will start with `!`
   if (message.substring(0, 1) == "!") {
@@ -75,3 +75,20 @@ bot.on("message", async (user, userID, channelID, message, evt) => {
     }
   }
 });
+
+// Send img every hour
+setInterval(async () => {
+  if (targetChannelID !== "0") {
+    logger.info("Getting userID");
+    const uID = await acquire.userID();
+    logger.info("Getting tweetID");
+    const tID = await acquire.latestID(await uID);
+    logger.info("Getting media URL");
+    const mURL = await acquire.tweetMediaURL(tID);
+    logger.info("Sending latest");
+    bot.sendMessage({
+      to: targetChannelID,
+      message: await mURL,
+    });
+  }
+}, 60 * 60 * 1000);
