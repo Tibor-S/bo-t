@@ -1,6 +1,7 @@
 const Discord = require("discord.io");
 const logger = require("winston");
 const auth = require("./auth.json");
+const acquire = require("./acquire");
 let targetChannelID = "0";
 
 // Configure logger settings
@@ -22,31 +23,53 @@ bot.on("ready", function (evt) {
   logger.info(bot.username + " - (" + bot.id + ")");
 });
 
-bot.on("message", function (user, userID, channelID, message, evt) {
+bot.on("message", async (user, userID, channelID, message, evt) => {
   // Our bot needs to know if it will execute a command
   // It will listen for messages that will start with `!`
-  if (message.substring(0, 2) == "/*") {
-    var arg = message.substring(2);
+  if (message.substring(0, 1) == "!") {
+    var arg = message.substring(1).toLowerCase()[0];
     var cmd = arg;
     switch (cmd) {
-      // /*status
-
-      case "status":
+      case "s":
+        logger.info("Sending status");
         bot.sendMessage({
           to: channelID,
           message:
             targetChannelID !== "0"
               ? `Online in channel ${targetChannelID} :)`
-              : "Missing a target channel.\n\nTarget a channel by typing /*target in the desired channel.",
+              : "Missing a target channel.\nTarget a channel by typing !target in the desired channel.",
         });
         break;
 
-      case "target":
+      case "t":
+        logger.info("Setting target");
         targetChannelID = channelID;
         bot.sendMessage({
           to: channelID,
           message: `Now targeting channel ${channelID}`,
         });
+        break;
+
+      case "l":
+        logger.info("Getting userID");
+        const uID = await acquire.userID();
+        logger.info("Getting tweetID");
+        const tID = await acquire.latestID(await uID);
+        logger.info("Getting media URL");
+        const mURL = await acquire.tweetMediaURL(tID);
+        logger.info("Sending latest");
+        bot.sendMessage({
+          to: targetChannelID !== "0" ? targetChannelID : channelID,
+          message:
+            targetChannelID !== "0"
+              ? await mURL
+              : "Missing a target channel.\nTarget a channel by typing !target in the desired channel.",
+        });
+        break;
+
+      case "d":
+        logger.info("Disconnecting");
+        bot.disconnect();
         break;
       // Just add any case commands if you want to..
     }
