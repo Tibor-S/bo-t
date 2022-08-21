@@ -1,6 +1,8 @@
 const auth = require("./auth.json");
 const twitterBearerToken = auth["twitter-bearer-token"]; // App token
-const fetch = require("node-fetch");
+// const fetch = require("node-fetch");
+const fetch = (...args) =>
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const accName = "RedPandaEveryHr";
 
 const userID = async () => {
