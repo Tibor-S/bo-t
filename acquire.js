@@ -1,9 +1,5 @@
 const auth = require("./auth.json");
-const twitterApiToken = auth["twitter-api-token"];
-const twitterApiSecretToken = auth["twitter-api-secret-token"];
 const twitterBearerToken = auth["twitter-bearer-token"]; // App token
-const twitterAccToken = auth["twitter-acc-token"];
-const twitterAccSecretToken = auth["twitter-acc-secret-token"];
 const fetch = require("node-fetch");
 const accName = "RedPandaEveryHr";
 
